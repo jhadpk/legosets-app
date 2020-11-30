@@ -9,6 +9,7 @@ import SetCount from './SetCount'
 import ThemeCount from './ThemeCount'
 import PartsPerYear from './PartsPerYear'
 import ColorTrends from './ColorTrends'
+import ThemesReleasedTrend from './ThemesReleasedTrend'
 
 import RecentReviews from './RecentReviews'
 export default function Dashboard() {
@@ -27,41 +28,57 @@ export default function Dashboard() {
     fixedHeight: {
       height: 240,
     },
+
+    mediumFixedHeight: {
+      height: 350,
+    },
+    doubleFixedHeight: {
+      height: 400,
+    },
   }))
   const classes = useStyles(theme)
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight)
+  // const doubleFixedHeightPaper = clsx(classes.paper, classes.doubleFixedHeight)
+  const mediumFixedHeightPaper = clsx(classes.paper, classes.mediumFixedHeight)
 
   return (
     <React.Fragment>
       <Grid container spacing={4}>
         {/* ThemePriceTrend Chart */}
-        <Grid item xs={12} md={8} lg={6}>
-          <Paper className={fixedHeightPaper}>
+        <Grid item xs={12} md={8} lg={8}>
+          <Paper className={mediumFixedHeightPaper}>
             <ThemePriceTrendChart />
           </Paper>
         </Grid>
         {/* Set Count */}
-        <Grid item xs={12} md={2} lg={3}>
-          <Paper className={fixedHeightPaper}>
+        <Grid item xs={12} md={2} lg={4}>
+          <Paper className={mediumFixedHeightPaper}>
             <SetCount />
           </Paper>
         </Grid>
-        {/* Theme Count */}
-        <Grid item xs={12} md={2} lg={3}>
-          <Paper className={fixedHeightPaper}>
-            <ThemeCount />
+        {/* Color Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper className={mediumFixedHeightPaper}>
+            <ColorTrends />
           </Paper>
         </Grid>
         {/* PartsperYear Trends */}
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper className={fixedHeightPaper}>
+        <Grid item xs={12} md={6} lg={8}>
+          <Paper className={mediumFixedHeightPaper}>
             <PartsPerYear />
           </Paper>
         </Grid>
-        {/* Color Trends */}
-        <Grid item xs={12} md={6} lg={6}>
-          <Paper className={fixedHeightPaper}>
-            <ColorTrends />
+
+        {/* PartsperYear Trends */}
+        <Grid item xs={12} md={6} lg={8}>
+          <Paper className={mediumFixedHeightPaper}>
+            <ThemesReleasedTrend />
+          </Paper>
+        </Grid>
+        {/* Theme Count */}
+        <Grid item xs={12} md={2} lg={4}>
+          <Paper className={mediumFixedHeightPaper}>
+            <ThemeCount />
           </Paper>
         </Grid>
 

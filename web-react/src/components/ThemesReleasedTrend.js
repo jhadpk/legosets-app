@@ -14,26 +14,26 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    averagePartsPerYear(first: 20) {
+    themesReleasedPerYear(first: 20) {
       year
-      average
+      themeCount
     }
   }
 `
 
-export default function PartsPerYear() {
+export default function ThemesReleasedTrend() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
 
   return (
     <React.Fragment>
-      <Title>Average parts per Year</Title>
+      <Title>Themes Released per Year</Title>
       <ResponsiveContainer>
         <LineChart
           width={500}
           height={300}
-          data={data.averagePartsPerYear}
+          data={data.themesReleasedPerYear}
           margin={{
             top: 5,
             right: 30,
@@ -48,7 +48,7 @@ export default function PartsPerYear() {
           <Legend />
           <Line
             type="monotone"
-            dataKey="average"
+            dataKey="themeCount"
             stroke="#8884d8"
             activeDot={{ r: 8 }}
           />

@@ -1,19 +1,21 @@
 import React from 'react'
-import { useTheme } from '@material-ui/core/styles'
 import {
+  ResponsiveContainer,
+  ComposedChart,
+  Line,
   Bar,
   XAxis,
   YAxis,
-  Label,
-  ResponsiveContainer,
-  BarChart,
+  CartesianGrid,
+  Tooltip,
+  Legend,
 } from 'recharts'
 import { useQuery, gql } from '@apollo/client'
 import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    themePrices(first: 10, orderBy: USD_average_desc) {
+    subthemePrices(first: 10, orderBy: USD_average_asc) {
       theme
       USD_average
     }
@@ -21,8 +23,6 @@ const GET_DATA_QUERY = gql`
 `
 
 export default function RatingsChart() {
-  const theme = useTheme()
-
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
@@ -31,27 +31,27 @@ export default function RatingsChart() {
     <React.Fragment>
       <Title>Theme wise Average USD Price</Title>
       <ResponsiveContainer>
-        <BarChart
-          data={data.themePrices}
+        <ComposedChart
+          layout="vertical"
+          width={500}
+          height={400}
+          data={data.subthemePrices}
           margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20,
           }}
         >
-          <XAxis dataKey="theme" stroke={theme.palette.text.secondary} />
-          <YAxis stroke={theme.palette.text.secondary}>
-            <Label
-              angle={270}
-              position="left"
-              style={{ textAnchor: 'middle', fill: theme.palette.text.primary }}
-            >
-              Average USD Price
-            </Label>
-          </YAxis>
-          <Bar dataKey="USD_average" fill={theme.palette.primary.main}></Bar>
-        </BarChart>
+          <CartesianGrid stroke="#f5f5f5" />
+          <XAxis type="USD_average" />
+          <YAxis dataKey="theme" type="category" />
+          <Tooltip />
+          <Legend />
+          {/* <Area dataKey="USD_average" fill="#8884d8" stroke="#8884d8" /> */}
+          <Bar dataKey="USD_average" barSize={20} fill="#413ea0" />
+          <Line dataKey="USD_average" stroke="#ff7300" />
+        </ComposedChart>
       </ResponsiveContainer>
     </React.Fragment>
   )

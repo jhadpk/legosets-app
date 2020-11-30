@@ -6,8 +6,17 @@ type Query {
     @cypher(
       statement: """
       MATCH (n:Set)
-      WHERE EXISTS(n.USD_MSRP)
       WITH n.derived_theme AS theme, AVG(n.USD_MSRP) AS average
+      WHERE average > 65
+      RETURN {theme: theme, USD_average: average} as Obj
+      """
+    )
+  subthemePrices: [ThemePrice]
+    @cypher(
+      statement: """
+      MATCH (n:Set)
+      WITH n.derived_subtheme AS theme, AVG(n.USD_MSRP) AS average
+      WHERE average > 100
       RETURN {theme: theme, USD_average: average} as Obj
       """
     )
@@ -22,7 +31,6 @@ type Query {
       ORDER BY num_parts DESC
       """
     )
-
   averagePartsPerYear: [YearWisePartsAverage]
     @cypher(
       statement: """
@@ -30,6 +38,16 @@ type Query {
       WHERE EXISTS(n.num_parts)
       WITH n.year AS year, AVG(n.num_parts) AS average
       RETURN {year: year, average: average} as Obj
+      ORDER BY year DESC
+      """
+    )
+  themesReleasedPerYear: [YearwiseThemeCount]
+    @cypher(
+      statement: """
+      MATCH (n:Set)-[:HAS_THEME]->(t:Theme)
+      WHERE EXISTS (n.year)
+      WITH n.year AS year, COUNT(DISTINCT(t.id)) AS themeCount
+      RETURN {year: year, themeCount: themeCount} as Obj
       ORDER BY year DESC
       """
     )
@@ -48,6 +66,11 @@ type ColorParts {
 type YearWisePartsAverage {
   year: Int
   average: Float
+}
+
+type YearwiseThemeCount {
+  year: Int
+  themeCount: Int
 }
 
 type Theme {
