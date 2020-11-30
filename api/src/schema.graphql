@@ -1,64 +1,130 @@
-type User {
-  userId: ID!
-  name: String
-  reviews: [Review] @relation(name: "WROTE", direction: "OUT")
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN toFloat(avg(r.stars))"
-    )
-  numReviews: Int
-    @cypher(statement: "MATCH (this)-[:WROTE]->(r:Review) RETURN COUNT(r)")
-  recommendations(first: Int = 3): [Business]
-    @cypher(
-      statement: "MATCH (this)-[:WROTE]->(r:Review)-[:REVIEWS]->(:Business)<-[:REVIEWS]-(:Review)<-[:WROTE]-(:User)-[:WROTE]->(:Review)-[:REVIEWS]->(rec:Business) WHERE NOT EXISTS( (this)-[:WROTE]->(:Review)-[:REVIEWS]->(rec) ) WITH rec, COUNT(*) AS num ORDER BY num DESC LIMIT $first RETURN rec"
-    )
-}
-
-type Business {
-  businessId: ID!
-  name: String!
-  address: String
-  city: String
-  state: String
-  location: Point
-  avgStars: Float
-    @cypher(
-      statement: "MATCH (this)<-[:REVIEWS]-(r:Review) RETURN coalesce(avg(r.stars),0.0)"
-    )
-  reviews: [Review] @relation(name: "REVIEWS", direction: "IN")
-  categories: [Category] @relation(name: "IN_CATEGORY", direction: "OUT")
-}
-
-type Review {
-  reviewId: ID!
-  stars: Float
-  text: String
-  date: Date
-  business: Business @relation(name: "REVIEWS", direction: "OUT")
-  user: User @relation(name: "WROTE", direction: "IN")
-}
-
-type Category {
-  name: ID!
-  businesses: [Business] @relation(name: "IN_CATEGORY", direction: "IN")
-}
-
-type RatingCount {
-  stars: Float!
-  count: Int!
-}
-
-type Mutation {
-  mergeBusinessCategory(categories: [String!]!, businessId: ID!): Business
-    @cypher(
-      statement: "MATCH (b:Business {businessId: $businessId}) UNWIND $categories AS cat MERGE (c:Category {name: cat}) MERGE (b)-[:IN_CATEGORY]->(c) RETURN b"
-    )
-}
-
 type Query {
-  userCount: Int! @cypher(statement: "MATCH (u:User) RETURN COUNT(u)")
-  ratingsCount: [RatingCount]
+  themeCount: Int @cypher(statement: "MATCH (t:Theme) RETURN COUNT(t)")
+  setCount: Int
+    @cypher(statement: "MATCH (n:Set) RETURN COUNT(DISTINCT(n.set_num))")
+  themePrices: [ThemePrice]
     @cypher(
-      statement: "MATCH (r:Review) WITH r.stars AS stars, COUNT(*) AS count ORDER BY stars RETURN {stars: stars, count: count}"
+      statement: """
+      MATCH (n:Set)
+      WHERE EXISTS(n.USD_MSRP)
+      WITH n.derived_theme AS theme, AVG(n.USD_MSRP) AS average
+      RETURN {theme: theme, USD_average: average} as Obj
+      """
     )
+  uniquePartsPerColor: [ColorParts]
+    @cypher(
+      statement: """
+      MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
+      MATCH (i:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      WHERE EXISTS (p.part_num) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
+      WITH c.name AS color, COUNT(DISTINCT(p.part_num)) AS num_parts
+      RETURN {color: color, num_parts: num_parts} as Obj
+      ORDER BY num_parts DESC
+      """
+    )
+
+  averagePartsPerYear: [YearWisePartsAverage]
+    @cypher(
+      statement: """
+      MATCH (n:Set)
+      WHERE EXISTS(n.num_parts)
+      WITH n.year AS year, AVG(n.num_parts) AS average
+      RETURN {year: year, average: average} as Obj
+      ORDER BY year DESC
+      """
+    )
+}
+
+type ThemePrice {
+  theme: String
+  USD_average: Float
+}
+
+type ColorParts {
+  color: String
+  num_parts: Int
+}
+
+type YearWisePartsAverage {
+  year: Int
+  average: Float
+}
+
+type Theme {
+  _id: Long!
+  id: String!
+  name: String!
+  has_parent_theme: [Theme]
+    @relation(name: "HAS_PARENT_THEME", direction: "OUT")
+  sets: [Set] @relation(name: "HAS_THEME", direction: "IN")
+}
+
+type Set {
+  _id: Long!
+  CAD_MSRP: Float
+  EUR_MSRP: Float
+  GBP_MSRP: Float
+  USD_MSRP: Float
+  derived_subtheme: String
+  derived_theme: String
+  name: String
+  num_parts: Int
+  set_num: String
+  year: Int
+  has_theme: [Theme] @relation(name: "HAS_THEME", direction: "OUT")
+  inventorys: [Inventory] @relation(name: "INVENTORY_FOR", direction: "IN")
+}
+
+type PartCategory {
+  _id: Long!
+  id: String!
+  name: String!
+  parts: [Part] @relation(name: "HAS_PART_CATEGORY", direction: "IN")
+}
+
+type Part {
+  _id: Long!
+  name: String!
+  part_num: String!
+  has_part_category: [PartCategory]
+    @relation(name: "HAS_PART_CATEGORY", direction: "OUT")
+  inventoryparts: [InventoryPart] @relation(name: "FOR_PART", direction: "IN")
+}
+
+type Color {
+  _id: Long!
+  id: String!
+  is_trans: String!
+  name: String!
+  rgb: String!
+  inventoryparts: [InventoryPart] @relation(name: "HAS_COLOR", direction: "IN")
+}
+
+type Inventory {
+  _id: Long!
+  id: String!
+  version: String!
+  inventory_for: [Set] @relation(name: "INVENTORY_FOR", direction: "OUT")
+  INVENTORY_FOR_rel: [INVENTORY_FOR]
+  inventoryparts: [InventoryPart]
+    @relation(name: "ASSOCIATED_INVENTORY", direction: "IN")
+}
+
+type InventoryPart {
+  _id: Long!
+  color_id: String!
+  inventory_id: String!
+  is_spare: String!
+  part_num: String!
+  quantity: String!
+  has_color: [Color] @relation(name: "HAS_COLOR", direction: "OUT")
+  for_part: [Part] @relation(name: "FOR_PART", direction: "OUT")
+  associated_inventory: [Inventory]
+    @relation(name: "ASSOCIATED_INVENTORY", direction: "OUT")
+}
+
+type INVENTORY_FOR @relation(name: "INVENTORY_FOR") {
+  from: Inventory!
+  to: Set!
+  setQuantity: String
 }

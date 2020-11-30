@@ -9,18 +9,24 @@ import Title from './Title'
 
 const GET_RECENT_REVIEWS_QUERY = gql`
   {
-    Review(first: 10, orderBy: date_desc) {
-      user {
-        name
+    Set(
+      first: 10
+      orderBy: USD_MSRP_desc
+      filter: {
+        derived_theme_not: null
+        derived_subtheme_not: ""
+        USD_MSRP_not: null
+        EUR_MSRP_not: null
       }
-      business {
-        name
-      }
-      date {
-        formatted
-      }
-      text
-      stars
+    ) {
+      name
+      set_num
+      year
+      derived_theme
+      derived_subtheme
+      num_parts
+      USD_MSRP
+      EUR_MSRP
     }
   }
 `
@@ -32,25 +38,33 @@ export default function RecentReviews() {
 
   return (
     <React.Fragment>
-      <Title>Recent Reviews</Title>
+      <Title>Set Details</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Business Name</TableCell>
-            <TableCell>User Name</TableCell>
-            <TableCell>Review Text</TableCell>
-            <TableCell align="right">Review Stars</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Number</TableCell>
+            <TableCell>Year</TableCell>
+            <TableCell>Theme</TableCell>
+            <TableCell>Subtheme</TableCell>
+            <TableCell>Num_Parts</TableCell>
+            <TableCell>USD MSRP</TableCell>
+            <TableCell>EUR MSRP</TableCell>
+            {/* <TableCell align="right">Review Stars</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.Review.map((row) => (
+          {data.Set.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.date.formatted}</TableCell>
-              <TableCell>{row.business.name}</TableCell>
-              <TableCell>{row.user.name}</TableCell>
-              <TableCell>{row.text}</TableCell>
-              <TableCell align="right">{row.stars}</TableCell>
+              <TableCell>{row.name}</TableCell>
+              <TableCell>{row.set_num}</TableCell>
+              <TableCell>{row.year}</TableCell>
+              <TableCell>{row.derived_theme}</TableCell>
+              <TableCell>{row.derived_subtheme}</TableCell>
+              <TableCell>{row.num_parts}</TableCell>
+              <TableCell>{row.USD_MSRP}</TableCell>
+              <TableCell>{row.EUR_MSRP}</TableCell>
+              {/* <TableCell align="right">{row.stars}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>

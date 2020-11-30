@@ -4,8 +4,12 @@ import { Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
-import RatingsChart from './RatingsChart'
-import UserCount from './UserCount'
+import ThemePriceTrendChart from './ThemePriceTrendChart'
+import SetCount from './SetCount'
+import ThemeCount from './ThemeCount'
+import PartsPerYear from './PartsPerYear'
+import ColorTrends from './ColorTrends'
+
 import RecentReviews from './RecentReviews'
 export default function Dashboard() {
   const theme = useTheme()
@@ -30,18 +34,38 @@ export default function Dashboard() {
   return (
     <React.Fragment>
       <Grid container spacing={4}>
-        {/* Ratings Chart */}
-        <Grid item xs={12} md={8} lg={7}>
+        {/* ThemePriceTrend Chart */}
+        <Grid item xs={12} md={8} lg={6}>
           <Paper className={fixedHeightPaper}>
-            <RatingsChart />
+            <ThemePriceTrendChart />
           </Paper>
         </Grid>
-        {/* User Count */}
-        <Grid item xs={12} md={4} lg={5}>
+        {/* Set Count */}
+        <Grid item xs={12} md={2} lg={3}>
           <Paper className={fixedHeightPaper}>
-            <UserCount />
+            <SetCount />
           </Paper>
         </Grid>
+        {/* Theme Count */}
+        <Grid item xs={12} md={2} lg={3}>
+          <Paper className={fixedHeightPaper}>
+            <ThemeCount />
+          </Paper>
+        </Grid>
+        {/* PartsperYear Trends */}
+        <Grid item xs={12} md={6} lg={6}>
+          <Paper className={fixedHeightPaper}>
+            <PartsPerYear />
+          </Paper>
+        </Grid>
+
+        {/* Color Trends */}
+        <Grid item xs={12} md={6} lg={6}>
+          <Paper className={fixedHeightPaper}>
+            <ColorTrends />
+          </Paper>
+        </Grid>
+
         {/* Recent Reviews */}
         <Grid item xs={12}>
           <Paper className={classes.paper}>
