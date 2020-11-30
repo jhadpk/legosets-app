@@ -58,7 +58,6 @@ export default function Dashboard() {
             <PartsPerYear />
           </Paper>
         </Grid>
-
         {/* Color Trends */}
         <Grid item xs={12} md={6} lg={6}>
           <Paper className={fixedHeightPaper}>
