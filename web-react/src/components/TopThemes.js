@@ -15,41 +15,41 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    subthemePrices(first: 10, orderBy: USD_average_asc) {
-      theme
-      USD_average
+    topThemesBasedOnSetCount {
+      name
+      count
     }
   }
 `
 
-export default function ThemePriceTrendChart() {
+export default function TopThemes() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
 
   return (
     <React.Fragment>
-      <Title>Theme wise Average USD Price</Title>
+      <Title>Top Themes Based On Set Count</Title>
       <ResponsiveContainer>
         <ComposedChart
           layout="vertical"
           width={500}
           height={400}
-          data={data.subthemePrices}
+          data={data.topThemesBasedOnSetCount}
           margin={{
-            top: 10,
-            right: 20,
-            bottom: 10,
-            left: 20,
+            top: 20,
+            right: 10,
+            bottom: 20,
+            left: 35,
           }}
         >
           <CartesianGrid stroke="#f5f5f5" />
-          <XAxis type="USD_average" />
-          <YAxis dataKey="theme" type="category" />
+          <XAxis type="count" />
+          <YAxis dataKey="name" type="category" />
           <Tooltip />
           <Legend />
           {/* <Area dataKey="USD_average" fill="#8884d8" stroke="#8884d8" /> */}
-          <Bar dataKey="USD_average" barSize={20} fill="#413ea0" />
+          <Bar dataKey="count" barSize={20} fill="#413ea0" />
           {/* <Line dataKey="USD_average" stroke="#ff7300" /> */}
         </ComposedChart>
       </ResponsiveContainer>

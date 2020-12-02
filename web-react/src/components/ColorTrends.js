@@ -12,6 +12,10 @@ const GET_DATA_QUERY = gql`
   }
 `
 
+let renderLabel = function (entry) {
+  return entry.color + ':' + entry.num_parts
+}
+
 export default function ColorTrends() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
@@ -25,11 +29,13 @@ export default function ColorTrends() {
           <Pie
             dataKey="num_parts"
             nameKey="color"
-            isAnimationActive={false}
+            isAnimationActive={true}
             data={data.uniquePartsPerColor}
-            outerRadius={120}
+            outerRadius={80}
             fill="#3f51b5"
+            label={renderLabel}
           />
+
           <Tooltip />
         </PieChart>
       </ResponsiveContainer>

@@ -35,7 +35,7 @@ export default function ThemesReleasedTrend() {
           height={300}
           data={data.themesReleasedPerYear}
           margin={{
-            top: 5,
+            top: 25,
             right: 30,
             left: 20,
             bottom: 5,

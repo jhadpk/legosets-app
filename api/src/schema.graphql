@@ -20,17 +20,6 @@ type Query {
       RETURN {theme: theme, USD_average: average} as Obj
       """
     )
-  uniquePartsPerColor: [ColorParts]
-    @cypher(
-      statement: """
-      MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
-      MATCH (i:InventoryPart)-[:HAS_COLOR]->(c:Color)
-      WHERE EXISTS (p.part_num) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
-      WITH c.name AS color, COUNT(DISTINCT(p.part_num)) AS num_parts
-      RETURN {color: color, num_parts: num_parts} as Obj
-      ORDER BY num_parts DESC
-      """
-    )
   averagePartsPerYear: [YearWisePartsAverage]
     @cypher(
       statement: """
@@ -51,16 +40,74 @@ type Query {
       ORDER BY year DESC
       """
     )
+  uniquePartsPerColor: [PartsPerColor]
+    @cypher(
+      statement: """
+      MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
+      MATCH (i:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      WHERE EXISTS (p.part_num) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
+      WITH c.name AS color, COUNT(DISTINCT(p.part_num)) AS num_parts
+      RETURN {color: color, num_parts: num_parts} as Obj
+      ORDER BY num_parts DESC
+      """
+    )
+  #   uniqueSetsPerColorPerYear: [SetsPerColorPerYear]
+  #     @cypher(
+  #       statement: """
+  #       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+  #       MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+  #       MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+  #       WHERE EXISTS (ip.inventory_id) AND  c.name IN ['Black', 'White', 'Yellow', 'Red']
+  #       WITH DISTINCT(s.year) AS year, c.name as color, COUNT(DISTINCT(s.name)) AS num_sets
+  #       RETURN {year:year, color:color, count:num_sets} as Obj
+  #       ORDER BY Obj.year DESC
+  #       """
+  #     )
+  setsWithMaxColorPerYear: [maxColorSetsPerYear]
+    @cypher(
+      statement: """
+      MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+      MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+      WHERE EXISTS (ip.inventory_id) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
+      WITH s.year AS year, s.name as set_name, COUNT(DISTINCT(c.name)) AS num_colors
+      RETURN {year:year, set_name: set_name, num_colors: num_colors} as Obj
+      ORDER BY num_colors DESC
+      LIMIT 100
+      """
+    )
+  topThemesBasedOnSetCount: [topThemes]
+    @cypher(
+      statement: """
+      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
+      WITH DISTINCT(t.name) as name, COUNT(s.set_num) as count
+      RETURN {name: name, count: count} AS Obj
+      ORDER BY count DESC
+      LIMIT 15
+      """
+    )
 }
+
+type topThemes {
+  name: String
+  count: Int
+}
+
+type maxColorSetsPerYear {
+  year: Int
+  set_name: String
+  num_colors: Int
+}
+
+# type SetsPerColorPerYear {
+#   year: Int
+#   color: String
+#   count: Int
+# }
 
 type ThemePrice {
   theme: String
   USD_average: Float
-}
-
-type ColorParts {
-  color: String
-  num_parts: Int
 }
 
 type YearWisePartsAverage {
@@ -71,6 +118,11 @@ type YearWisePartsAverage {
 type YearwiseThemeCount {
   year: Int
   themeCount: Int
+}
+
+type PartsPerColor {
+  color: String
+  num_parts: Int
 }
 
 type Theme {

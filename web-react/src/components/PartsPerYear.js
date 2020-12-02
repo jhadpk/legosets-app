@@ -28,14 +28,14 @@ export default function PartsPerYear() {
 
   return (
     <React.Fragment>
-      <Title>Average parts per Year</Title>
+      <Title>Average Number of Parts Per Set Trend</Title>
       <ResponsiveContainer>
         <LineChart
           width={500}
           height={300}
           data={data.averagePartsPerYear}
           margin={{
-            top: 5,
+            top: 25,
             right: 30,
             left: 20,
             bottom: 5,

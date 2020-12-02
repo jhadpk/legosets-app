@@ -17,6 +17,8 @@ const GET_RECENT_REVIEWS_QUERY = gql`
         derived_subtheme_not: ""
         USD_MSRP_not: null
         EUR_MSRP_not: null
+        GBP_MSRP_not: null
+        CAD_MSRP_not: null
       }
     ) {
       name
@@ -27,11 +29,13 @@ const GET_RECENT_REVIEWS_QUERY = gql`
       num_parts
       USD_MSRP
       EUR_MSRP
+      GBP_MSRP
+      CAD_MSRP
     }
   }
 `
 
-export default function RecentReviews() {
+export default function SetPriceDetailsChart() {
   const { loading, error, data } = useQuery(GET_RECENT_REVIEWS_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
@@ -43,13 +47,16 @@ export default function RecentReviews() {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            <TableCell>Number</TableCell>
+            {/* <TableCell>Number</TableCell> */}
             <TableCell>Year</TableCell>
             <TableCell>Theme</TableCell>
             <TableCell>Subtheme</TableCell>
             <TableCell>Num_Parts</TableCell>
-            <TableCell>USD MSRP</TableCell>
-            <TableCell>EUR MSRP</TableCell>
+            <TableCell>USD</TableCell>
+            <TableCell>EUR</TableCell>
+            <TableCell>GBP</TableCell>
+            <TableCell>CAD</TableCell>
+
             {/* <TableCell align="right">Review Stars</TableCell> */}
           </TableRow>
         </TableHead>
@@ -57,13 +64,15 @@ export default function RecentReviews() {
           {data.Set.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.name}</TableCell>
-              <TableCell>{row.set_num}</TableCell>
+              {/* <TableCell>{row.set_num}</TableCell> */}
               <TableCell>{row.year}</TableCell>
               <TableCell>{row.derived_theme}</TableCell>
               <TableCell>{row.derived_subtheme}</TableCell>
               <TableCell>{row.num_parts}</TableCell>
               <TableCell>{row.USD_MSRP}</TableCell>
               <TableCell>{row.EUR_MSRP}</TableCell>
+              <TableCell>{row.GBP_MSRP}</TableCell>
+              <TableCell>{row.CAD_MSRP}</TableCell>
               {/* <TableCell align="right">{row.stars}</TableCell> */}
             </TableRow>
           ))}
