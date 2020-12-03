@@ -5,7 +5,7 @@
 Built UI on top of WebReact using Neo4j as database service. Serving the static React components to Netlify cdn, the graphQl API is deployed on AWS Lambda as a Netlify function, and this GraphQL API is quering the neo4j instance anytime a query is run.
 
 ## Dashboard:
-![Screenshot1][img/1.png]
+![Screenshot1](img/1.png)
 
 <img width="1676" alt="Screen Shot 2020-12-02 at 9 09 46 PM" src="https://user-images.githubusercontent.com/10484648/100967299-c27b1980-34e3-11eb-803d-b3db22d38a61.png">
 <img width="1680" alt="Screen Shot 2020-12-02 at 9 09 57 PM" src="https://user-images.githubusercontent.com/10484648/100967307-c444dd00-34e3-11eb-9e2f-165bd0bb676f.png">
