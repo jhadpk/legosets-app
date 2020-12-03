@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
-import ThemeList from './components/ThemeList'
+// import ThemeList from './components/ThemeList'
 
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
@@ -193,7 +193,7 @@ export default function App() {
           <Container maxWidth="lg" className={classes.container}>
             <Switch>
               <Route exact path="/" component={Dashboard} />
-              <Route exact path="/themes" component={ThemeList} />
+              {/* <Route exact path="/themes" component={ThemeList} /> */}
             </Switch>
 
             <Box pt={4}>
