@@ -85,7 +85,7 @@ type Query {
       statement: """
       MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
       MATCH (i:InventoryPart)-[:HAS_COLOR]->(c:Color)
-      WHERE EXISTS (p.part_num) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
+      WHERE EXISTS (p.part_num) AND NOT c.name IN ['[No Color]', 'Unknown']
       WITH c.name AS color, COUNT(DISTINCT(p.part_num)) AS num_parts
       RETURN {color: color, num_parts: num_parts} as Obj
       ORDER BY num_parts DESC
@@ -99,7 +99,7 @@ type Query {
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
       MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
       MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
-      WHERE EXISTS (ip.inventory_id) AND c.name <> '[No Color]' AND c.name <> 'Unknown'
+      WHERE EXISTS (ip.inventory_id) AND NOT c.name IN ['[No Color]', 'Unknown']
       WITH s.year AS year, s.name as set_name, COUNT(DISTINCT(c.name)) AS num_colors
       RETURN {year:year, set_name: set_name, num_colors: num_colors} as Obj
       ORDER BY num_colors DESC
@@ -146,6 +146,25 @@ type Query {
       ORDER BY year DESC
       """
     )
+
+  # Load CSV and Add price properties to Set Node
+
+  # LOAD CSV WITH HEADERS FROM 'file:///legosets_price.csv' AS line
+  # MATCH (s:Set {set_num:line.Item_Number})
+  # SET s.EUR_MSRP=toFloat(line.EUR_MSRP), s.USD_MSRP=toFloat(line.USD_MSRP), s.GBP_MSRP=toFloat(line.GBP_MSRP), s.CAD_MSRP=toFloat(line.CAD_MSRP), s.derived_subtheme=line.Subtheme, s.derived_theme=line.Theme
+
+  #Master Node Creation:
+
+  # MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+  # MATCH (ip:InventoryPart)-[:FOR_PART]->(p:Part)
+  # MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+  # MATCH (p:Part)-[:HAS_PART_CATEGORY]->(pc:PartCategory)
+  # MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+  # MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
+  # MATCH (t:Theme)-[:HAS_PARENT_THEME]->(pt:Theme)
+  # WHERE EXISTS(s.USD_MSRP)
+  # WITH DISTINCT(s.name) AS setname, t.name AS theme, pt.name AS parentTheme, s.year AS year, ip.inventory_id AS inventoryId, s.num_parts AS num_parts, COUNT(DISTINCT(p.part_num)) AS distinct_parts, s.USD_MSRP AS usd_price,s.CAD_MSRP AS cad_price,s.GBP_MSRP AS gbp_price,s.EUR_MSRP AS eur_price, collect(DISTINCT(c.name)) AS colors, collect(DISTINCT(pc.name)) AS part_categories
+  # CREATE (c:Master {setname: setname, theme: theme, parentTheme: parentTheme, year: year, inventoryId: inventoryId, num_parts: num_parts, distinct_parts: distinct_parts, usd_price: usd_price,cad_price: cad_price,gbp_price: gbp_price,eur_price: eur_price, colors: colors, part_categories: part_categories})
 
   #   uniqueSetsPerColorPerYear: [SetsPerColorPerYear]
   #     @cypher(
