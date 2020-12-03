@@ -6,18 +6,20 @@ type Query {
     @cypher(
       statement: """
       MATCH (n:Set)
+      WHERE EXISTS(n.derived_theme) AND EXISTS(n.USD_MSRP)
       WITH n.derived_theme AS theme, AVG(n.USD_MSRP) AS average
-      WHERE average > 65
       RETURN {theme: theme, USD_average: average} as Obj
+      ORDER BY average DESC
       """
     )
   subthemePrices: [ThemePrice]
     @cypher(
       statement: """
       MATCH (n:Set)
+      WHERE EXISTS(n.derived_subtheme) AND EXISTS(n.USD_MSRP)
       WITH n.derived_subtheme AS theme, AVG(n.USD_MSRP) AS average
-      WHERE average > 100
       RETURN {theme: theme, USD_average: average} as Obj
+      ORDER BY average DESC
       """
     )
   averagePartsPerYear: [YearWisePartsAverage]
@@ -73,7 +75,7 @@ type Query {
       WITH s.year AS year, s.name as set_name, COUNT(DISTINCT(c.name)) AS num_colors
       RETURN {year:year, set_name: set_name, num_colors: num_colors} as Obj
       ORDER BY num_colors DESC
-      LIMIT 100
+      LIMIT 15
       """
     )
   topThemesBasedOnSetCount: [topThemes]
@@ -86,11 +88,87 @@ type Query {
       LIMIT 15
       """
     )
+
+  legosetPriceTrend: [setPriceTrend]
+    @cypher(
+      statement: """
+      MATCH (n:Set)
+      WHERE EXISTS(n.year) and EXISTS(n.USD_MSRP)
+      WITH n.year AS year, AVG(n.USD_MSRP) AS average
+      RETURN {year: year, USD_average: average} as Obj
+      ORDER BY year DESC
+      """
+    )
+
+  #  Redundant Open
+  blackColorSetsTrend: [colorSetsTrend]
+    @cypher(
+      statement: """
+      MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+      MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+      WHERE EXISTS (ip.inventory_id) AND c.name = 'Black'
+      WITH DISTINCT(s.year) AS year, COUNT(DISTINCT(s.name)) AS num_sets
+      RETURN {year:year, num_sets:num_sets} as Obj
+      ORDER BY year DESC
+      """
+    )
+  whiteColorSetsTrend: [colorSetsTrend]
+    @cypher(
+      statement: """
+      MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+      MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+      WHERE EXISTS (ip.inventory_id) AND c.name = 'White'
+      WITH DISTINCT(s.year) AS year, COUNT(DISTINCT(s.name)) AS num_sets
+      RETURN {year:year, num_sets:num_sets} as Obj
+      ORDER BY year DESC
+      """
+    )
+  redColorSetsTrend: [colorSetsTrend]
+    @cypher(
+      statement: """
+      MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+      MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+      MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+      WHERE EXISTS (ip.inventory_id) AND c.name = 'Red'
+      WITH DISTINCT(s.year) AS year, COUNT(DISTINCT(s.name)) AS num_sets
+      RETURN {year:year, num_sets:num_sets} as Obj
+      ORDER BY year DESC
+      """
+    )
+  # Redundant Close
+  legosetsPartsPerTheme: [setPartsPerTheme]
+    @cypher(
+      statement: """
+      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
+      WHERE EXISTS(s.name)
+      WITH s.name as setname, t.name as theme, SUM(s.num_parts) as num_parts
+      RETURN {setname: setname, theme: theme, num_parts: num_parts} AS Obj
+      ORDER BY num_parts DESC
+      """
+    )
+}
+
+type setPartsPerTheme {
+  setname: String
+  theme: String
+  num_parts: Int
+}
+
+type colorSetsTrend {
+  year: Int
+  num_sets: Int
 }
 
 type topThemes {
   name: String
   count: Int
+}
+
+type setPriceTrend {
+  year: String
+  USD_average: Float
 }
 
 type maxColorSetsPerYear {
@@ -196,6 +274,23 @@ type InventoryPart {
   for_part: [Part] @relation(name: "FOR_PART", direction: "OUT")
   associated_inventory: [Inventory]
     @relation(name: "ASSOCIATED_INVENTORY", direction: "OUT")
+}
+
+type Master {
+  _id: Long!
+  cad_price: Float
+  colors: [String]!
+  distinct_parts: Int!
+  eur_price: Float
+  gbp_price: Float
+  inventoryId: String!
+  num_parts: Int!
+  parentTheme: String!
+  part_categories: [String]!
+  setname: String!
+  theme: String!
+  usd_price: Float!
+  year: Int!
 }
 
 type INVENTORY_FOR @relation(name: "INVENTORY_FOR") {

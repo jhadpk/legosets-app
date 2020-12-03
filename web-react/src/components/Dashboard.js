@@ -7,12 +7,18 @@ import clsx from 'clsx'
 import ThemePriceTrendChart from './ThemePriceTrendChart'
 import SetCount from './SetCount'
 import ThemeCount from './ThemeCount'
+import PartsPerSetPerTheme from './PartsPerSetPerTheme'
 import ColorTrends from './ColorTrends'
 import SetsWithMaxColorsTrend from './SetsWithMaxColorsTrend'
+import LegosetPriceTrend from './LegosetPriceTrend'
 import PartsPerYear from './PartsPerYear'
+import ColorBlackSetsTrend from './ColorBlackSetsTrend'
+import ColorWhiteSetsTrend from './ColorWhiteSetsTrend'
+import ColorRedSetsTrend from './ColorRedSetsTrend'
 import ThemesReleasedTrend from './ThemesReleasedTrend'
 import TopThemes from './TopThemes'
 import SetPriceDetailsChart from './SetPriceDetailsChart'
+import MasterTable from './MasterTable'
 export default function Dashboard() {
   const theme = useTheme()
 
@@ -40,42 +46,41 @@ export default function Dashboard() {
   return (
     <React.Fragment>
       <Grid container spacing={4}>
-        {/* ThemesReleasedTrend Trends */}
-        <Grid item xs={12} md={6} lg={8}>
-          <Paper className={doubleFixedHeightPaper}>
-            <ThemesReleasedTrend />
-          </Paper>
-        </Grid>
-        {/* Theme Count */}
-        <Grid item xs={12} md={2} lg={4}>
-          <Paper className={doubleFixedHeightPaper}>
-            <ThemeCount />
-          </Paper>
-        </Grid>
-
-        {/* Color Trends */}
-        <Grid item xs={12} md={6} lg={4}>
-          <Paper className={doubleFixedHeightPaper}>
-            <ColorTrends />
-          </Paper>
-        </Grid>
-        {/* SetsPerColorPerYear Trends */}
-        <Grid item xs={12} md={6} lg={8}>
-          <Paper className={doubleFixedHeightPaper}>
-            <SetsWithMaxColorsTrend />
-          </Paper>
-        </Grid>
-
         {/* PartsPerSetperYear Trends */}
-        <Grid item xs={12} md={6} lg={8}>
+        <Grid item xs={12} md={6} lg={5}>
+          <Paper className={doubleFixedHeightPaper}>
+            <LegosetPriceTrend />
+          </Paper>
+        </Grid>
+        {/* PartsPerSetperYear Trends */}
+        <Grid item xs={12} md={6} lg={5}>
           <Paper className={doubleFixedHeightPaper}>
             <PartsPerYear />
           </Paper>
         </Grid>
         {/* Set Count */}
-        <Grid item xs={12} md={2} lg={4}>
+        <Grid item xs={12} md={2} lg={2}>
           <Paper className={doubleFixedHeightPaper}>
             <SetCount />
+          </Paper>
+        </Grid>
+
+        {/* Theme Count */}
+        <Grid item xs={12} md={2} lg={2}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ThemeCount />
+          </Paper>
+        </Grid>
+        {/* ThemesReleasedTrend Trends */}
+        <Grid item xs={12} md={6} lg={5}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ThemesReleasedTrend />
+          </Paper>
+        </Grid>
+        {/* ThemesReleasedTrend Trends */}
+        <Grid item xs={12} md={6} lg={5}>
+          <Paper className={doubleFixedHeightPaper}>
+            <PartsPerSetPerTheme />
           </Paper>
         </Grid>
 
@@ -92,10 +97,49 @@ export default function Dashboard() {
           </Paper>
         </Grid>
 
+        {/* Color Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ColorTrends />
+          </Paper>
+        </Grid>
+        {/* SetsPerColorPerYear Trends */}
+        <Grid item xs={12} md={6} lg={8}>
+          <Paper className={doubleFixedHeightPaper}>
+            <SetsWithMaxColorsTrend />
+          </Paper>
+        </Grid>
+
+        {/* ColorWiseSetsTrend Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ColorBlackSetsTrend />
+          </Paper>
+        </Grid>
+        {/* ColorWiseSetsTrend Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ColorWhiteSetsTrend />
+          </Paper>
+        </Grid>
+        {/* ColorWiseSetsTrend Trends */}
+        <Grid item xs={12} md={6} lg={4}>
+          <Paper className={doubleFixedHeightPaper}>
+            <ColorRedSetsTrend />
+          </Paper>
+        </Grid>
+
         {/* SetPriceDetailsChart */}
         <Grid item xs={12}>
           <Paper className={classes.paper}>
             <SetPriceDetailsChart />
+          </Paper>
+        </Grid>
+
+        {/* SetPriceDetailsChart */}
+        <Grid item xs={12}>
+          <Paper className={classes.paper}>
+            <MasterTable />
           </Paper>
         </Grid>
       </Grid>

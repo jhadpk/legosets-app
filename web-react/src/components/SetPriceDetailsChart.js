@@ -7,7 +7,7 @@ import TableRow from '@material-ui/core/TableRow'
 import { useQuery, gql } from '@apollo/client'
 import Title from './Title'
 
-const GET_RECENT_REVIEWS_QUERY = gql`
+const GET_DATA_QUERY = gql`
   {
     Set(
       first: 10
@@ -36,7 +36,7 @@ const GET_RECENT_REVIEWS_QUERY = gql`
 `
 
 export default function SetPriceDetailsChart() {
-  const { loading, error, data } = useQuery(GET_RECENT_REVIEWS_QUERY)
+  const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
 
@@ -47,7 +47,6 @@ export default function SetPriceDetailsChart() {
         <TableHead>
           <TableRow>
             <TableCell>Name</TableCell>
-            {/* <TableCell>Number</TableCell> */}
             <TableCell>Year</TableCell>
             <TableCell>Theme</TableCell>
             <TableCell>Subtheme</TableCell>
@@ -56,15 +55,12 @@ export default function SetPriceDetailsChart() {
             <TableCell>EUR</TableCell>
             <TableCell>GBP</TableCell>
             <TableCell>CAD</TableCell>
-
-            {/* <TableCell align="right">Review Stars</TableCell> */}
           </TableRow>
         </TableHead>
         <TableBody>
           {data.Set.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.name}</TableCell>
-              {/* <TableCell>{row.set_num}</TableCell> */}
               <TableCell>{row.year}</TableCell>
               <TableCell>{row.derived_theme}</TableCell>
               <TableCell>{row.derived_subtheme}</TableCell>
@@ -73,7 +69,6 @@ export default function SetPriceDetailsChart() {
               <TableCell>{row.EUR_MSRP}</TableCell>
               <TableCell>{row.GBP_MSRP}</TableCell>
               <TableCell>{row.CAD_MSRP}</TableCell>
-              {/* <TableCell align="right">{row.stars}</TableCell> */}
             </TableRow>
           ))}
         </TableBody>

@@ -15,7 +15,7 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    subthemePrices(first: 10, orderBy: USD_average_asc) {
+    subthemePrices(first: 10) {
       theme
       USD_average
     }
@@ -29,7 +29,7 @@ export default function ThemePriceTrendChart() {
 
   return (
     <React.Fragment>
-      <Title>Theme wise Average USD Price</Title>
+      <Title>Top Themes Based on Average USD Price</Title>
       <ResponsiveContainer>
         <ComposedChart
           layout="vertical"
