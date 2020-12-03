@@ -1,28 +1,18 @@
 type Query {
-  themeCount: Int @cypher(statement: "MATCH (t:Theme) RETURN COUNT(t)")
-  setCount: Int
-    @cypher(statement: "MATCH (n:Set) RETURN COUNT(DISTINCT(n.set_num))")
-  themePrices: [ThemePrice]
+  legosetPriceTrend: [setPriceTrend]
+    #LegosetPriceTrend.js
     @cypher(
       statement: """
       MATCH (n:Set)
-      WHERE EXISTS(n.derived_theme) AND EXISTS(n.USD_MSRP)
-      WITH n.derived_theme AS theme, AVG(n.USD_MSRP) AS average
-      RETURN {theme: theme, USD_average: average} as Obj
-      ORDER BY average DESC
+      WHERE EXISTS(n.year) and EXISTS(n.USD_MSRP)
+      WITH n.year AS year, AVG(n.USD_MSRP) AS average
+      RETURN {year: year, USD_average: average} as Obj
+      ORDER BY year DESC
       """
     )
-  subthemePrices: [ThemePrice]
-    @cypher(
-      statement: """
-      MATCH (n:Set)
-      WHERE EXISTS(n.derived_subtheme) AND EXISTS(n.USD_MSRP)
-      WITH n.derived_subtheme AS theme, AVG(n.USD_MSRP) AS average
-      RETURN {theme: theme, USD_average: average} as Obj
-      ORDER BY average DESC
-      """
-    )
+
   averagePartsPerYear: [YearWisePartsAverage]
+    #AveragePartsPerYear.js
     @cypher(
       statement: """
       MATCH (n:Set)
@@ -32,7 +22,17 @@ type Query {
       ORDER BY year DESC
       """
     )
+
+  setCount: Int
+    #SetCount.js
+    @cypher(statement: "MATCH (n:Set) RETURN COUNT(DISTINCT(n.set_num))")
+
+  themeCount: Int
+    #ThemeCount.js
+    @cypher(statement: "MATCH (t:Theme) RETURN COUNT(t)")
+
   themesReleasedPerYear: [YearwiseThemeCount]
+    #ThemesReleasedTrend.js
     @cypher(
       statement: """
       MATCH (n:Set)-[:HAS_THEME]->(t:Theme)
@@ -42,7 +42,45 @@ type Query {
       ORDER BY year DESC
       """
     )
+
+  legosetsPartsPerTheme: [setPartsPerTheme]
+    #PartsPerSetPerTheme.js
+    @cypher(
+      statement: """
+      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
+      WHERE EXISTS(s.name)
+      WITH s.name as setname, t.name as theme, SUM(s.num_parts) as num_parts
+      RETURN {setname: setname, theme: theme, num_parts: num_parts} AS Obj
+      ORDER BY num_parts DESC
+      """
+    )
+
+  subthemePrices: [ThemePrice]
+    #ThemePriceTrendChart.js
+    @cypher(
+      statement: """
+      MATCH (n:Set)
+      WHERE EXISTS(n.derived_subtheme) AND EXISTS(n.USD_MSRP)
+      WITH n.derived_subtheme AS theme, AVG(n.USD_MSRP) AS average
+      RETURN {theme: theme, USD_average: average} as Obj
+      ORDER BY average DESC
+      """
+    )
+
+  topThemesBasedOnSetCount: [topThemes]
+    #TopThemes.js
+    @cypher(
+      statement: """
+      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
+      WITH DISTINCT(t.name) as name, COUNT(s.set_num) as count
+      RETURN {name: name, count: count} AS Obj
+      ORDER BY count DESC
+      LIMIT 15
+      """
+    )
+
   uniquePartsPerColor: [PartsPerColor]
+    #ColorTrends.js
     @cypher(
       statement: """
       MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
@@ -53,19 +91,9 @@ type Query {
       ORDER BY num_parts DESC
       """
     )
-  #   uniqueSetsPerColorPerYear: [SetsPerColorPerYear]
-  #     @cypher(
-  #       statement: """
-  #       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
-  #       MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
-  #       MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
-  #       WHERE EXISTS (ip.inventory_id) AND  c.name IN ['Black', 'White', 'Yellow', 'Red']
-  #       WITH DISTINCT(s.year) AS year, c.name as color, COUNT(DISTINCT(s.name)) AS num_sets
-  #       RETURN {year:year, color:color, count:num_sets} as Obj
-  #       ORDER BY Obj.year DESC
-  #       """
-  #     )
+
   setsWithMaxColorPerYear: [maxColorSetsPerYear]
+    #SetsWithMaxColorsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -78,30 +106,9 @@ type Query {
       LIMIT 15
       """
     )
-  topThemesBasedOnSetCount: [topThemes]
-    @cypher(
-      statement: """
-      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
-      WITH DISTINCT(t.name) as name, COUNT(s.set_num) as count
-      RETURN {name: name, count: count} AS Obj
-      ORDER BY count DESC
-      LIMIT 15
-      """
-    )
 
-  legosetPriceTrend: [setPriceTrend]
-    @cypher(
-      statement: """
-      MATCH (n:Set)
-      WHERE EXISTS(n.year) and EXISTS(n.USD_MSRP)
-      WITH n.year AS year, AVG(n.USD_MSRP) AS average
-      RETURN {year: year, USD_average: average} as Obj
-      ORDER BY year DESC
-      """
-    )
-
-  #  Redundant Open
   blackColorSetsTrend: [colorSetsTrend]
+    #ColorBlackSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -114,6 +121,7 @@ type Query {
       """
     )
   whiteColorSetsTrend: [colorSetsTrend]
+    #ColorWhiteSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -126,6 +134,7 @@ type Query {
       """
     )
   redColorSetsTrend: [colorSetsTrend]
+    #ColorRedSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -137,17 +146,34 @@ type Query {
       ORDER BY year DESC
       """
     )
-  # Redundant Close
-  legosetsPartsPerTheme: [setPartsPerTheme]
-    @cypher(
-      statement: """
-      MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
-      WHERE EXISTS(s.name)
-      WITH s.name as setname, t.name as theme, SUM(s.num_parts) as num_parts
-      RETURN {setname: setname, theme: theme, num_parts: num_parts} AS Obj
-      ORDER BY num_parts DESC
-      """
-    )
+
+  #   uniqueSetsPerColorPerYear: [SetsPerColorPerYear]
+  #     @cypher(
+  #       statement: """
+  #       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
+  #       MATCH (ip:InventoryPart)-[:HAS_COLOR]->(c:Color)
+  #       MATCH (i:Inventory)-[:INVENTORY_FOR]->(s:Set)
+  #       WHERE EXISTS (ip.inventory_id) AND  c.name IN ['Black', 'White', 'Yellow', 'Red']
+  #       WITH DISTINCT(s.year) AS year, c.name as color, COUNT(DISTINCT(s.name)) AS num_sets
+  #       RETURN {year:year, color:color, count:num_sets} as Obj
+  #       ORDER BY Obj.year DESC
+  #       """
+  #     )
+}
+
+type setPriceTrend {
+  year: String
+  USD_average: Float
+}
+
+type YearWisePartsAverage {
+  year: Int
+  average: Float
+}
+
+type YearwiseThemeCount {
+  year: Int
+  themeCount: Int
 }
 
 type setPartsPerTheme {
@@ -166,11 +192,6 @@ type topThemes {
   count: Int
 }
 
-type setPriceTrend {
-  year: String
-  USD_average: Float
-}
-
 type maxColorSetsPerYear {
   year: Int
   set_name: String
@@ -186,16 +207,6 @@ type maxColorSetsPerYear {
 type ThemePrice {
   theme: String
   USD_average: Float
-}
-
-type YearWisePartsAverage {
-  year: Int
-  average: Float
-}
-
-type YearwiseThemeCount {
-  year: Int
-  themeCount: Int
 }
 
 type PartsPerColor {

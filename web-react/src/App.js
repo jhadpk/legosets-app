@@ -29,7 +29,7 @@ function Copyright() {
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       <MUILink color="inherit" href="https://grandstack.io/">
-        Deepak Demo
+        Demo
       </MUILink>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -169,7 +169,7 @@ export default function App() {
               noWrap
               className={classes.title}
             >
-              Solution Engineer Intern Assignment Demo
+              Internship Assignment Demo
             </Typography>
           </Toolbar>
         </AppBar>

@@ -1,5 +1,26 @@
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://grandstack.io/deploy-starter-netlify) [![Deploy to Vercel](https://vercel.com/button)](https://grandstack.io/deploy-starter-vercel) [![Provision Neo4j](https://grandstack.io/img/provision-neo4j.png)](https://sandbox.neo4j.com/?usecase=blank-sandbox)
 
+# Internship Demo Assignment for Neo4j
+
+Built UI on top of WebReact using Neo4j as database service. Serving the static React components to Netlify cdn, the graphQl API is deployed on AWS Lambda as a Netlify function, and this GraphQL API is quering the neo4j instance anytime a query is run.
+
+## Dashboard:
+
+<img width="1676" alt="Screen Shot 2020-12-02 at 9 09 46 PM" src="https://user-images.githubusercontent.com/10484648/100967299-c27b1980-34e3-11eb-803d-b3db22d38a61.png">
+<img width="1680" alt="Screen Shot 2020-12-02 at 9 09 57 PM" src="https://user-images.githubusercontent.com/10484648/100967307-c444dd00-34e3-11eb-9e2f-165bd0bb676f.png">
+<img width="1680" alt="Screen Shot 2020-12-02 at 9 10 05 PM" src="https://user-images.githubusercontent.com/10484648/100967309-c4dd7380-34e3-11eb-8205-b384a931210e.png">
+<img width="1680" alt="Screen Shot 2020-12-02 at 9 10 13 PM" src="https://user-images.githubusercontent.com/10484648/100967310-c5760a00-34e3-11eb-9abd-64d8bf19e788.png">
+
+## Backend Queries
+
+https://github.com/jhadpk/legosets-app/blob/master/api/src/schema.graphql
+
+## React Components
+
+https://github.com/jhadpk/legosets-app/tree/master/web-react/src/components
+
+---
+
 # GRANDstack Starter
 
 ```

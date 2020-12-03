@@ -4,14 +4,15 @@ import { Grid, Paper } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
 import clsx from 'clsx'
 
-import ThemePriceTrendChart from './ThemePriceTrendChart'
+import LegosetPriceTrend from './LegosetPriceTrend'
+import AveragePartsPerYear from './AveragePartsPerYear'
 import SetCount from './SetCount'
 import ThemeCount from './ThemeCount'
+
+import ThemePriceTrendChart from './ThemePriceTrendChart'
 import PartsPerSetPerTheme from './PartsPerSetPerTheme'
 import ColorTrends from './ColorTrends'
 import SetsWithMaxColorsTrend from './SetsWithMaxColorsTrend'
-import LegosetPriceTrend from './LegosetPriceTrend'
-import PartsPerYear from './PartsPerYear'
 import ColorBlackSetsTrend from './ColorBlackSetsTrend'
 import ColorWhiteSetsTrend from './ColorWhiteSetsTrend'
 import ColorRedSetsTrend from './ColorRedSetsTrend'
@@ -55,7 +56,7 @@ export default function Dashboard() {
         {/* PartsPerSetperYear Trends */}
         <Grid item xs={12} md={6} lg={5}>
           <Paper className={doubleFixedHeightPaper}>
-            <PartsPerYear />
+            <AveragePartsPerYear />
           </Paper>
         </Grid>
         {/* Set Count */}

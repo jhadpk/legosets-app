@@ -10,7 +10,7 @@ const GET_COUNT_QUERY = gql`
   }
 `
 
-export default function Deposits() {
+export default function ThemeCount() {
   const { loading, error, data } = useQuery(GET_COUNT_QUERY)
   if (error) return <p>Error</p>
   return (
