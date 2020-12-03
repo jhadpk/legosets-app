@@ -16,7 +16,7 @@ let renderLabel = function (entry) {
   return entry.color + ':' + entry.num_parts
 }
 
-export default function ColorTrends() {
+export default function UniquePartsPerColor() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>

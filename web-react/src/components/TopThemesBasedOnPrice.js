@@ -15,14 +15,14 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    subthemePrices(first: 10) {
+    topThemesBasedOnPrice(first: 10) {
       theme
       USD_average
     }
   }
 `
 
-export default function ThemePriceTrendChart() {
+export default function TopThemesBasedOnPrice() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
@@ -35,7 +35,7 @@ export default function ThemePriceTrendChart() {
           layout="vertical"
           width={500}
           height={400}
-          data={data.subthemePrices}
+          data={data.topThemesBasedOnPrice}
           margin={{
             top: 10,
             right: 20,

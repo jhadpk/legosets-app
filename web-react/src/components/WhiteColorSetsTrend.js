@@ -21,7 +21,7 @@ const GET_DATA_QUERY = gql`
   }
 `
 
-export default function ColorWhiteSetsTrend() {
+export default function WhiteColorSetsTrend() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>

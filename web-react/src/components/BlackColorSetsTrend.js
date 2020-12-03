@@ -14,26 +14,29 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    redColorSetsTrend(first: 10) {
+    blackColorSetsTrend(first: 10) {
       year
       num_sets
     }
   }
 `
 
-export default function ColorRedSetsTrend() {
+export default function BlackColorSetsTrend() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>
+  console.log('data recived black: ')
+  console.log(data)
+  console.log(data.blackColorSetsTrend)
 
   return (
     <React.Fragment>
-      <Title>Red Colored Sets</Title>
+      <Title>Black Colored sets</Title>
       <ResponsiveContainer>
         <LineChart
           width={500}
           height={300}
-          data={data.redColorSetsTrend}
+          data={data.blackColorSetsTrend}
           margin={{
             top: 25,
             right: 0,

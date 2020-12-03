@@ -29,9 +29,9 @@ type Query {
 
   themeCount: Int
     #ThemeCount.js
-    @cypher(statement: "MATCH (t:Theme) RETURN COUNT(t)")
+    @cypher(statement: "MATCH (t:Theme) RETURN COUNT(DISTINCT(t.id))")
 
-  themesReleasedPerYear: [YearwiseThemeCount]
+  themesReleasedTrend: [YearwiseThemeCount]
     #ThemesReleasedTrend.js
     @cypher(
       statement: """
@@ -43,7 +43,7 @@ type Query {
       """
     )
 
-  legosetsPartsPerTheme: [setPartsPerTheme]
+  partsPerSetPerTheme: [setPartsPerTheme]
     #PartsPerSetPerTheme.js
     @cypher(
       statement: """
@@ -55,24 +55,24 @@ type Query {
       """
     )
 
-  subthemePrices: [ThemePrice]
-    #ThemePriceTrendChart.js
+  topThemesBasedOnPrice: [ThemePrice]
+    #TopThemesBasedOnPrice.js
     @cypher(
       statement: """
-      MATCH (n:Set)
-      WHERE EXISTS(n.derived_subtheme) AND EXISTS(n.USD_MSRP)
-      WITH n.derived_subtheme AS theme, AVG(n.USD_MSRP) AS average
+      MATCH (n:Set)-[:HAS_THEME]->(t:Theme)
+      WHERE EXISTS(t.name) AND EXISTS(n.USD_MSRP)
+      WITH t.name AS theme, AVG(n.USD_MSRP) AS average
       RETURN {theme: theme, USD_average: average} as Obj
       ORDER BY average DESC
       """
     )
 
   topThemesBasedOnSetCount: [topThemes]
-    #TopThemes.js
+    #TopThemesBasedOnSetCount.js
     @cypher(
       statement: """
       MATCH (s:Set)-[:HAS_THEME]->(t:Theme)
-      WITH DISTINCT(t.name) as name, COUNT(s.set_num) as count
+      WITH t.name as name, COUNT(s.set_num) as count
       RETURN {name: name, count: count} AS Obj
       ORDER BY count DESC
       LIMIT 15
@@ -80,7 +80,7 @@ type Query {
     )
 
   uniquePartsPerColor: [PartsPerColor]
-    #ColorTrends.js
+    #UniquePartsPerColor.js
     @cypher(
       statement: """
       MATCH (i:InventoryPart)-[:FOR_PART]->(p:Part)
@@ -93,7 +93,7 @@ type Query {
     )
 
   setsWithMaxColorPerYear: [maxColorSetsPerYear]
-    #SetsWithMaxColorsTrend.js
+    #SetsWithMaxColorPerYear.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -108,7 +108,7 @@ type Query {
     )
 
   blackColorSetsTrend: [colorSetsTrend]
-    #ColorBlackSetsTrend.js
+    #BlackColorSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -121,7 +121,7 @@ type Query {
       """
     )
   whiteColorSetsTrend: [colorSetsTrend]
-    #ColorWhiteSetsTrend.js
+    #WhiteColorSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)
@@ -134,7 +134,7 @@ type Query {
       """
     )
   redColorSetsTrend: [colorSetsTrend]
-    #ColorRedSetsTrend.js
+    #RedColorSetsTrend.js
     @cypher(
       statement: """
       MATCH (ip:InventoryPart)-[:ASSOCIATED_INVENTORY]->(i:Inventory)

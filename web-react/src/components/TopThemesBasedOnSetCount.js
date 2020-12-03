@@ -22,7 +22,7 @@ const GET_DATA_QUERY = gql`
   }
 `
 
-export default function TopThemes() {
+export default function TopThemesBasedOnSetCount() {
   const { loading, error, data } = useQuery(GET_DATA_QUERY)
   if (error) return <p>Error</p>
   if (loading) return <p>Loading</p>

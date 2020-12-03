@@ -14,7 +14,7 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    themesReleasedPerYear(first: 20) {
+    themesReleasedTrend(first: 20) {
       year
       themeCount
     }
@@ -33,7 +33,7 @@ export default function ThemesReleasedTrend() {
         <LineChart
           width={500}
           height={300}
-          data={data.themesReleasedPerYear}
+          data={data.themesReleasedTrend}
           margin={{
             top: 25,
             right: 30,

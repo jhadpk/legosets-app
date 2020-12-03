@@ -9,7 +9,7 @@ import Title from './Title'
 
 const GET_DATA_QUERY = gql`
   {
-    legosetsPartsPerTheme(first: 15) {
+    partsPerSetPerTheme(first: 15) {
       setname
       theme
       num_parts
@@ -34,7 +34,7 @@ export default function PartsPerSetPerTheme() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.legosetsPartsPerTheme.map((row) => (
+          {data.partsPerSetPerTheme.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.setname}</TableCell>
               <TableCell>{row.theme}</TableCell>

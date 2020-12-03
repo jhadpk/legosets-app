@@ -28,7 +28,7 @@ export default function LegosetPriceTrend() {
 
   return (
     <React.Fragment>
-      <Title>Legoset Average USD Price Over the Years</Title>
+      <Title>Average USD Price Per Set Trend</Title>
       <ResponsiveContainer>
         <LineChart
           width={500}
